@@ -19,7 +19,7 @@ spec:
         app: demo-app
     spec:
       containers:
-      - image: nginx
-        name: nginx
+      - image: ghcr.io/linuxserver/nginx:latest
+        name: demo-app
         resources: {}
 status: {}
