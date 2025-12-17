@@ -38,22 +38,24 @@ jobs:
       run: sbt test
     - name: Generate docker file
       run: sbt clean docker:stage
-#    - name: Install Podman (if not pre-installed)
-#      run: |
-#        sudo apt-get update
-#        sudo apt-get install -y podman
-#    - name: Log in to container registry
-#      run: |
-#        echo "${{ secrets.REGISTRY_PASSWORD }}" | \
-#        podman login \
-#          --username ${{ env.REGISTRY_USER }} \
-#          --password ${{ env.REGISTRY_PASSWORD }} \
-#         ${{ env.IMAGE_REGISTRY }}
-    - name: Log in to ghcr.io
-      uses: redhat-actions/podman-login@v1
-      with:
-        username: ${{ env.REGISTRY_USER }}
-        password: ${{ env.REGISTRY_PASSWORD }}
-        registry: ${{ env.IMAGE_REGISTRY }}
-    - name: Push Dockerfile
-      run: pwd
+    - name: Install Podman (if not pre-installed)
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y podman
+    - name: Log in to container registry
+      run: |
+        echo "${{ secrets.REGISTRY_PASSWORD }}" | \
+        podman login \
+          --username ${{ env.REGISTRY_USER }} \
+          --password ${{ env.REGISTRY_PASSWORD }} \
+         ${{ env.IMAGE_REGISTRY }}
+#    - name: Log in to ghcr.io
+#      uses: redhat-actions/podman-login@v1
+#      with:
+#        username: ${{ env.REGISTRY_USER }}
+#        password: ${{ env.REGISTRY_PASSWORD }}
+#        registry: ${{ env.IMAGE_REGISTRY }}
+    - name: Build application image
+      run: podman build -t ghcr.io/yuelirex/demoapp:0.0.2-dev ./target/docker/stage
+    - name: Push the image
+      run: podman push ghcr.io/yuelirex/demoapp:0.0.2-dev ${{ env.IMAGE_REGISTRY }}
