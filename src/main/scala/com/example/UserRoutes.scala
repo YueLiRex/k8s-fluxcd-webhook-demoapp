@@ -14,7 +14,7 @@ import pekko.util.Timeout
 
 //#import-json-formats
 //#user-routes-class
-class UserRoutes(userRegistry: ActorRef[UserRegistry.Command])(implicit val system: ActorSystem[_]) {
+class UserRoutes(userRegistry: ActorRef[UserRegistry.Command], config: UserRoutes.Config)(implicit val system: ActorSystem[_]) {
 
   //#user-routes-class
   import pekko.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
@@ -75,6 +75,22 @@ class UserRoutes(userRegistry: ActorRef[UserRegistry.Command])(implicit val syst
             })
         })
       //#users-get-delete
+    } ~ {
+      pathPrefix("env") {
+        get {
+          complete(config.env)
+        }
+      }
     }
   //#all-routes
+}
+
+object UserRoutes {
+  case class Config(env: String)
+
+  object Config {
+    def apply(conf: com.typesafe.config.Config): Config = Config(env = conf.getString("env"))
+  }
+
+
 }

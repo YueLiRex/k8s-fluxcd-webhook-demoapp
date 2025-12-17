@@ -30,15 +30,16 @@ object QuickstartApp {
   def main(args: Array[String]): Unit = {
     //#server-bootstrapping
     val rootBehavior = Behaviors.setup[Nothing] { context =>
+      val config = UserRoutes.Config(context.system.settings.config.getConfig("my-app"))
       val userRegistryActor = context.spawn(UserRegistry(), "UserRegistryActor")
       context.watch(userRegistryActor)
 
-      val routes = new UserRoutes(userRegistryActor)(context.system)
+      val routes = new UserRoutes(userRegistryActor, config)(context.system)
       startHttpServer(routes.userRoutes)(context.system)
 
       Behaviors.empty
     }
-    val system = ActorSystem[Nothing](rootBehavior, "HelloPekkoHttpServer")
+    val _ = ActorSystem[Nothing](rootBehavior, "HelloPekkoHttpServer")
     //#server-bootstrapping
   }
 }

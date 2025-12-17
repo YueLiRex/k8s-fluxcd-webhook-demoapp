@@ -1,3 +1,5 @@
+import com.typesafe.sbt.packager.docker.{DockerChmodType, DockerPermissionStrategy, DockerVersion}
+
 lazy val pekkoHttpVersion = "1.1.0"
 lazy val pekkoVersion     = "1.1.2"
 
@@ -24,5 +26,28 @@ lazy val root = (project in file(".")).
       "org.apache.pekko" %% "pekko-http-testkit"        % pekkoHttpVersion % Test,
       "org.apache.pekko" %% "pekko-actor-testkit-typed" % pekkoVersion     % Test,
       "org.scalatest"     %% "scalatest"                % "3.2.19"         % Test
-    )
+    ),
+    dockerSettings,
+    Compile / mainClass := Some("com.example.QuickstartApp")
+  ).enablePlugins(JavaAppPackaging, DockerPlugin)
+
+// -----------------------------------------------------------------------------
+// Docker settings
+// -----------------------------------------------------------------------------
+
+lazy val dockerSettings = Seq(
+  dockerRepository := Option("ghcr.io/YueLiRex"),
+  dockerBaseImage := "ghcr.io/graalvm/graalvm-community:21.0.2",
+  dockerPermissionStrategy := DockerPermissionStrategy.Run,
+  dockerVersion := Some(DockerVersion(0, 0, 0, None)),
+  Docker / packageName := "demoapp",
+  Docker / version := version.value,
+  Docker / daemonUserUid := None,
+  dockerExposedPorts ++= Seq(8080),
+  dockerAdditionalPermissions += (
+    DockerChmodType.Custom(
+      "+x"
+    ),
+    s"${(Docker / defaultLinuxInstallLocation).value}/bin/${executableScriptName.value}"
   )
+)

@@ -22,4 +22,7 @@ spec:
       - image: ghcr.io/linuxserver/nginx:latest
         name: demo-app
         resources: {}
+        env:
+        - name: DEMO_ENV_NAME
+          value: "{{ Values.replicaCount }}"
 status: {}
