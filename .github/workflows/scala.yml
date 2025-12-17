@@ -11,6 +11,11 @@ on:
   pull_request:
     branches: [ "main" ]
 
+env:
+  REGISTRY_USER: ${{ github.actor }}
+  REGISTRY_PASSWORD: ${{ github.token }}
+  IMAGE_REGISTRY: ghcr.io/yuelirex
+
 permissions:
   contents: read
 
@@ -22,8 +27,6 @@ jobs:
     steps:
     - uses: actions/checkout@v6
     - uses: fregante/setup-git-user@v2
-    - name: Show variable
-      run: echo $GITHUB_SECRET $GITHUB_USERNAME $GITHUB_REPOSITORY ${{ github.repository }}
     - name: Set up JDK 21
       uses: actions/setup-java@v5
       with:
@@ -33,3 +36,24 @@ jobs:
     - uses: sbt/setup-sbt@v1
     - name: Run tests
       run: sbt test
+    - name: Generate docker file
+      run: sbt clean docker:stage
+#    - name: Install Podman (if not pre-installed)
+#      run: |
+#        sudo apt-get update
+#        sudo apt-get install -y podman
+#    - name: Log in to container registry
+#      run: |
+#        echo "${{ secrets.REGISTRY_PASSWORD }}" | \
+#        podman login \
+#          --username ${{ env.REGISTRY_USER }} \
+#          --password ${{ env.REGISTRY_PASSWORD }} \
+#         ${{ env.IMAGE_REGISTRY }}
+    - name: Log in to ghcr.io
+      uses: redhat-actions/podman-login@v1
+      with:
+        username: ${{ env.REGISTRY_USER }}
+        password: ${{ env.REGISTRY_PASSWORD }}
+        registry: ${{ env.IMAGE_REGISTRY }}
+    - name: Push Dockerfile
+      run: pwd
