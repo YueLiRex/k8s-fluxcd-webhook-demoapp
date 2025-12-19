@@ -16,6 +16,9 @@ lazy val root = (project in file(".")).
       scalaVersion    := "2.13.15"
     )),
     name := "k8s-fluxcd-webhook-demoapp",
+    version := "0.0.1",
+    Compile / mainClass := Some("com.example.QuickstartApp"),
+
     libraryDependencies ++= Seq(
       "org.apache.pekko" %% "pekko-http"                % pekkoHttpVersion,
       "org.apache.pekko" %% "pekko-http-spray-json"     % pekkoHttpVersion,
@@ -28,7 +31,6 @@ lazy val root = (project in file(".")).
       "org.scalatest"     %% "scalatest"                % "3.2.19"         % Test
     ),
     dockerSettings,
-    Compile / mainClass := Some("com.example.QuickstartApp")
   ).enablePlugins(JavaAppPackaging, DockerPlugin)
 
 // -----------------------------------------------------------------------------
@@ -36,18 +38,11 @@ lazy val root = (project in file(".")).
 // -----------------------------------------------------------------------------
 
 lazy val dockerSettings = Seq(
-  dockerRepository := Option("ghcr.io/YueLiRex"),
+  dockerRepository := Option("ghcr.io/yuelirex"),
   dockerBaseImage := "ghcr.io/graalvm/graalvm-community:21.0.2",
   dockerPermissionStrategy := DockerPermissionStrategy.Run,
-  dockerVersion := Some(DockerVersion(0, 0, 0, None)),
+  dockerVersion := Some(DockerVersion(0, 0, 1, None)),
   Docker / packageName := "demoapp",
   Docker / version := version.value,
-  Docker / daemonUserUid := None,
   dockerExposedPorts ++= Seq(8080),
-  dockerAdditionalPermissions += (
-    DockerChmodType.Custom(
-      "+x"
-    ),
-    s"${(Docker / defaultLinuxInstallLocation).value}/bin/${executableScriptName.value}"
-  )
 )
