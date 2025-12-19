@@ -19,7 +19,7 @@ spec:
         app: demo-app
     spec:
       containers:
-      - image: ghcr.io/linuxserver/nginx:latest
+      - image: ghcr.io/yuelirex/k8s-fluxcd-webhook-demoapp:main
         name: demo-app
         resources: {}
         env:
