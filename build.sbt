@@ -44,7 +44,7 @@ lazy val devPackage = project
   .settings(
     // override the main class and resource directory
     name := "k8s-fluxcd-webhook-demoapp",
-    Compile / mainClass := (root / Compile / mainClass).value,
+//    Compile / mainClass := (root / Compile / mainClass).value,
     Compile / resourceDirectory := (root / Compile / resourceDirectory).value,
     Universal / mappings += {
       ((Compile / resourceDirectory).value / "dev.conf") -> "conf/application.conf"
@@ -60,7 +60,7 @@ lazy val livePackage = project
   .settings(
     // override the main class and resource directory
     name := "k8s-fluxcd-webhook-demoapp",
-    Compile / mainClass := (root / Compile / mainClass).value,
+//    Compile / mainClass := (root / Compile / mainClass).value,
     Compile / resourceDirectory := (root / Compile / resourceDirectory).value,
     Universal / mappings += {
       ((Compile / resourceDirectory).value / "live.conf") -> "conf/application.conf"
