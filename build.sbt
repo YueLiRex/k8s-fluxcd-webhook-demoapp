@@ -42,9 +42,14 @@ lazy val devPackage = project
   .in(file("build/dev"))
   .enablePlugins(JavaAppPackaging, DockerPlugin)
   .settings(
+    inThisBuild(List(
+      organization    := "com.example",
+      scalaVersion    := "2.13.15"
+    )),
     // override the main class and resource directory
     name := "k8s-fluxcd-webhook-demoapp",
-//    Compile / mainClass := (root / Compile / mainClass).value,
+    version := "0.0.1",
+    Compile / mainClass := (root / Compile / mainClass).value,
     Compile / resourceDirectory := (root / Compile / resourceDirectory).value,
     Universal / mappings += {
       ((Compile / resourceDirectory).value / "dev.conf") -> "conf/application.conf"
@@ -58,9 +63,14 @@ lazy val livePackage = project
   .in(file("build/live"))
   .enablePlugins(JavaAppPackaging, DockerPlugin)
   .settings(
+    inThisBuild(List(
+      organization    := "com.example",
+      scalaVersion    := "2.13.15"
+    )),
     // override the main class and resource directory
     name := "k8s-fluxcd-webhook-demoapp",
-//    Compile / mainClass := (root / Compile / mainClass).value,
+    version := "0.0.1",
+    Compile / mainClass := (root / Compile / mainClass).value,
     Compile / resourceDirectory := (root / Compile / resourceDirectory).value,
     Universal / mappings += {
       ((Compile / resourceDirectory).value / "live.conf") -> "conf/application.conf"
