@@ -3,12 +3,6 @@ import com.typesafe.sbt.packager.docker.{DockerChmodType, DockerPermissionStrate
 lazy val pekkoHttpVersion = "1.1.0"
 lazy val pekkoVersion     = "1.1.2"
 
-// Run in a separate JVM, to make sure sbt waits until all threads have
-// finished before returning.
-// If you want to keep the application running while executing other
-// sbt tasks, consider https://github.com/spray/sbt-revolver/
-fork := true
-
 lazy val root = (project in file(".")).
   settings(
     inThisBuild(List(
@@ -17,7 +11,8 @@ lazy val root = (project in file(".")).
     )),
     name := "k8s-fluxcd-webhook-demoapp",
     version := "0.0.1",
-    Compile / mainClass := Some("com.example.QuickstartApp"),
+    fork := true,
+//    Compile / mainClass := Some("com.example.QuickstartApp"),
 
     libraryDependencies ++= Seq(
       "org.apache.pekko" %% "pekko-http"                % pekkoHttpVersion,
@@ -34,9 +29,9 @@ lazy val root = (project in file(".")).
   ).enablePlugins(JavaAppPackaging, DockerPlugin)
 
 // -----------------------------------------------------------------------------
-// dev settings
+// environment package settings
 // -----------------------------------------------------------------------------
-
+/*
 lazy val devPackage = project
   // we put the results  in a build folder
   .in(file("build/dev"))
@@ -57,6 +52,7 @@ lazy val devPackage = project
     dockerSettings,
   )
   .dependsOn(root)
+ */
 
 lazy val livePackage = project
   // we put the results  in a build folder
@@ -71,6 +67,7 @@ lazy val livePackage = project
     name := "k8s-fluxcd-webhook-demoapp",
     version := "0.0.1",
     Compile / mainClass := (root / Compile / mainClass).value,
+    mainClass in packageBin := (root / Compile / mainClass).value,
     Compile / resourceDirectory := (root / Compile / resourceDirectory).value,
     Universal / mappings += {
       ((Compile / resourceDirectory).value / "live.conf") -> "conf/application.conf"
@@ -78,7 +75,6 @@ lazy val livePackage = project
     dockerSettings,
   )
   .dependsOn(root)
-
 
 // -----------------------------------------------------------------------------
 // Docker settings
